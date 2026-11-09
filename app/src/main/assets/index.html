@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="az">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manat Bölgüsü</title>
+<style>
+:root {
+  --bg: #f3f5f8; --surface: #fff; --ink: #0f1b2d; --muted: #5d6b80; --line: #e2e7ee; --line-2: #cfd7e2;
+  --navy: #0e2240; --accent: #1f5fd6; --ok: #1d8a4e; --ok-bg: #e7f5ec; --warn: #b35c00; --warn-bg: #fff4e5; --bad: #b42318;
+  --n200: #6b4fa0; --n100: #2f6db5; --n50: #c2541b; --n20: #2f8f5b; --n10: #a8326b; --n5: #8a6d1d; --n1: #5d6b80; --coin: #8c7a52;
+  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --bg: #0d1420; --surface: #152033; --ink: #e6ecf5; --muted: #93a1b5; --line: #24324a; --line-2: #33445f; --navy: #0a1628;
+    --accent: #6b9cff; --ok: #4cc283; --ok-bg: #12301f; --warn: #f0a24a; --warn-bg: #33240f; --bad: #ff7b6e; }
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+header.top { background: var(--navy); color: #fff; padding: 14px 20px; display: flex; align-items: center; gap: 12px; }
+header.top .logo { width: 38px; height: 38px; border-radius: 9px; background: rgba(255,255,255,.12); display: grid; place-items: center; font-size: 20px; font-weight: 700; }
+header.top h1 { margin: 0; font-size: 16px; letter-spacing: .14em; text-transform: uppercase; }
+header.top small { opacity: .7; font-size: 12px; }
+main { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; display: grid; gap: 16px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.card > header { display: flex; align-items: center; gap: 10px; padding: 14px 18px 0; flex-wrap: wrap; }
+.card > header h2 { margin: 0; font-size: 15px; }
+.card > header .n { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); color: var(--surface); display: grid; place-items: center; font-size: 12px; font-weight: 700; }
+.card > header .right { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+.body { padding: 14px 18px 18px; }
+textarea { width: 100%; min-height: 110px; resize: vertical; border: 1px solid var(--line-2); border-radius: 10px; padding: 12px 14px; font: 17px/1.5 var(--mono); background: var(--surface); color: var(--ink); }
+textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.note { color: var(--muted); font-size: 12.5px; }
+.row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.btn { border: 1px solid var(--line-2); background: var(--surface); color: var(--ink); border-radius: 8px; padding: 7px 14px; font: inherit; font-size: 13.5px; cursor: pointer; }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.chip { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--line-2); border-radius: 10px; padding: 6px; cursor: pointer; user-select: none; background: var(--surface); font-weight: 600; }
+.chip input { display: none; }
+.chip .bill { min-width: 64px; height: 30px; border-radius: 5px; display: grid; place-items: center; color: #fff; font: 700 13px var(--mono); padding: 0 6px; }
+.chip.off { opacity: .45; } .chip.off .bill { filter: grayscale(1); }
+.chip.on { border-color: var(--ink); box-shadow: 0 0 0 1px var(--ink); }
+.flabel { font-size: 11.5px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 14px 0 6px; }
+.msg { border-radius: 9px; padding: 9px 13px; font-size: 13.5px; margin-top: 10px; }
+.msg.warn { background: var(--warn-bg); color: var(--warn); } .msg.ok { background: var(--ok-bg); color: var(--ok); }
+.tscroll { overflow-x: auto; }
+table.t { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.t th { text-align: right; font-size: 11.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 10px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+table.t th:first-child, table.t td:first-child { text-align: left; }
+table.t td { text-align: right; padding: 10px; border-bottom: 1px solid var(--line); font-family: var(--mono); white-space: nowrap; }
+table.t td.z { color: var(--line-2); }
+table.t td.cnt b { font-size: 16px; }
+table.t th .bill { display: inline-block; min-width: 40px; padding: 2px 6px; border-radius: 4px; color: #fff; font: 700 12px var(--mono); text-align: center; }
+table.t tr.tot td { border-top: 2px solid var(--ink); border-bottom: 0; font-weight: 700; background: color-mix(in srgb, var(--accent) 7%, transparent); }
+table.t tr.tot td .v { display: block; font-weight: 400; font-size: 11.5px; color: var(--muted); }
+table.t td.amt { font-weight: 700; font-size: 16px; }
+table.t td.ok { color: var(--ok); font-family: inherit; }
+table.t td .idx { color: var(--muted); font-weight: 400; font-size: 12px; margin-right: 6px; }
+.formula { font-family: var(--mono); font-size: 12.5px; color: var(--muted); white-space: normal; text-align: left !important; min-width: 220px; }
+.big { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+.big .box { border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.big .box .bill { display: inline-block; padding: 2px 8px; border-radius: 4px; color: #fff; font: 700 12px var(--mono); }
+.big .box .c { font: 700 26px var(--mono); margin-top: 4px; }
+.big .box .s { color: var(--muted); font-size: 12.5px; font-family: var(--mono); }
+.big .box.sum { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.big .box.sum .s { color: inherit; opacity: .7; }
+.empty { color: var(--muted); padding: 24px 18px; text-align: center; }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: var(--surface); padding: 9px 16px; border-radius: 8px; font-size: 13.5px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+.toast.show { opacity: 1; }
+/* Telefon: hər ödəniş ayrıca kart */
+@media (max-width: 720px) {
+  table.t.main thead { display: none; }
+  table.t.main, table.t.main tbody, table.t.main tr, table.t.main td { display: block; width: 100%; }
+  table.t.main tr { border: 1px solid var(--line); border-radius: 10px; margin-bottom: 10px; padding: 6px 10px; }
+  table.t.main td { border: 0; padding: 4px 0; display: flex; justify-content: space-between; text-align: right; }
+  table.t.main td::before { content: attr(data-l); color: var(--muted); font-family: system-ui, sans-serif; font-size: 12.5px; }
+  table.t.main td.z { display: none; }
+  table.t.main td.formula { display: block; }
+  table.t.main td.formula::before { content: none; }
+  table.t.main tr.tot { background: color-mix(in srgb, var(--accent) 7%, transparent); }
+  table.t.main tr.tot td { border-top: 0; } table.t.main tr.tot td .v { display: inline; margin-left: 10px; }
+  table.t.main td.amt .idx { margin-left: auto; margin-right: 8px; }
+}
+@media print {
+  header.top, .card.input, .noprint { display: none !important; }
+  body { background: #fff; color: #000; } .card { border: 0; }
+  main { padding: 0; }
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="logo">₼</div>
+  <div><h1>Manat Bölgüsü</h1><small>Hər ödəniş üçün neçə əskinas lazımdır</small></div>
+</header>
+
+<main>
+  <section class="card input">
+    <header><span class="n">1</span><h2>Məbləğlər</h2></header>
+    <div class="body">
+      <textarea id="inp" placeholder="542, 341, 456, 742, 115, 669" spellcheck="false"></textarea>
+      <div class="note" style="margin-top:6px">Vergül + boşluq, boşluq, nöqtəli vergül və ya yeni sətirlə ayırın. Excel-dən sütunu birbaşa yapışdıra bilərsiniz. Qəpik: <span style="font-family:var(--mono)">542,50</span> və ya <span style="font-family:var(--mono)">542.50</span>.</div>
+
+      <div class="flabel">Hansı əskinaslar istifadə olunsun</div>
+      <div class="chips" id="chips"></div>
+      <div class="row" style="margin-top:10px">
+        <label class="note" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="coins"> Qəpikləri də sikkələrə böl (50, 20, 10, 5, 3, 1 qəpik)</label>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button class="btn" id="example">Nümunə</button>
+        <button class="btn" id="clear">Təmizlə</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card" id="resCard">
+    <header><span class="n">2</span><h2>Nəticə</h2>
+      <div class="right noprint">
+        <button class="btn" id="copy">Kopyala</button>
+        <button class="btn" id="csv">Excel (CSV)</button>
+        <button class="btn" id="print">Çap et</button>
+      </div>
+    </header>
+    <div id="res"></div>
+  </section>
+</main>
+<div class="toast" id="toast"></div>
+
+<script>
+(() => {
+  'use strict';
+  // ---------- Əskinaslar (qəpiklə: 100 qəpik = 1 manat) ----------
+  const NOTES = [
+    { v: 20000, label: '200', color: 'var(--n200)', def: false },
+    { v: 10000, label: '100', color: 'var(--n100)', def: true },
+    { v: 5000, label: '50', color: 'var(--n50)', def: true },
+    { v: 2000, label: '20', color: 'var(--n20)', def: true },
+    { v: 1000, label: '10', color: 'var(--n10)', def: false },
+    { v: 500, label: '5', color: 'var(--n5)', def: true },
+    { v: 100, label: '1', color: 'var(--n1)', def: true },
+  ];
+  const COINS = [50, 20, 10, 5, 3, 1].map((q) => ({ v: q, label: q + ' q', color: 'var(--coin)', coin: true }));
+
+  const store = {
+    get(k, d) { try { const v = localStorage.getItem('manat.' + k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+    set(k, v) { try { localStorage.setItem('manat.' + k, JSON.stringify(v)); } catch {} },
+  };
+  const on = store.get('on', null) || Object.fromEntries(NOTES.map((n) => [n.v, n.def]));
+  const $ = (s) => document.querySelector(s);
+  const inp = $('#inp'), coinsCb = $('#coins');
+  inp.value = store.get('text', '');
+  coinsCb.checked = store.get('coins', false);
+
+  // ---------- Mətndən məbləğləri oxu ----------
+  // "542, 341" → iki məbləğ; "542,50" → 542.50 (vergüldən sonra 1–2 rəqəm = qəpik)
+  function parse(text) {
+    const vals = [], bad = [];
+    const t = text.replace(/₼|AZN|manat|man\.?/gi, ' ').replace(/(\d),(\d{1,2})(?!\d)/g, '$1.$2');
+    for (const tok of t.split(/[\s,;]+/)) {
+      if (!tok) continue;
+      if (!/^\d+(\.\d+)?$/.test(tok)) { bad.push(tok); continue; }
+      const q = Math.round(parseFloat(tok) * 100);
+      if (q > 0) vals.push(q);
+    }
+    return { vals, bad };
+  }
+
+  // ---------- Bölgü: ən az əskinasla ----------
+  // Adətən ən böyük əskinasdan başlamaq (greedy) ən az əskinası verir; hər ehtimala qarşı
+  // dinamik proqramlaşdırma ilə yoxlanır və daha az əskinaslı variant varsa o götürülür.
+  function split(amount, dens) {
+    const greedy = new Map(); let rest = amount;
+    for (const d of dens) { const c = Math.floor(rest / d); greedy.set(d, c); rest -= c * d; }
+    if (rest !== 0) return { counts: greedy, rest };
+    // DP — böyük məbləğlərdə əvvəlcə ən böyük əskinasla «qalın» hissə götürülür, DP yalnız qalan 2000-ə qədər hissəyə
+    const top = dens[0], bulk = amount > 2000 ? Math.floor((amount - 2000) / top) : 0;
+    const N = amount - bulk * top, best = new Int32Array(N + 1).fill(1e9), from = new Int32Array(N + 1);
+    best[0] = 0;
+    for (let x = 1; x <= N; x++) for (const d of dens) if (d <= x && best[x - d] + 1 < best[x]) { best[x] = best[x - d] + 1; from[x] = d; }
+    const gN = [...greedy.values()].reduce((a, b) => a + b, 0);
+    if (best[N] + bulk >= gN) return { counts: greedy, rest: 0 };
+    const dp = new Map(dens.map((d) => [d, 0])); dp.set(top, bulk);
+    for (let x = N; x > 0; x -= from[x]) dp.set(from[x], dp.get(from[x]) + 1);
+    return { counts: dp, rest: 0 };
+  }
+  function breakdown(q, notes, coins) {
+    const man = Math.floor(q / 100) * 100, qep = q - man;
+    const a = split(man / 100, notes.map((n) => n.v / 100));     // manatla hesabla (sürətli)
+    const counts = new Map(notes.map((n) => [n.v, a.counts.get(n.v / 100) || 0]));
+    let rest = a.rest * 100 + qep;
+    if (coins && rest > 0) {
+      const b = split(rest, COINS.map((c) => c.v));
+      COINS.forEach((c) => counts.set(c.v, b.counts.get(c.v) || 0));
+      rest = b.rest;
+    }
+    return { counts, rest };
+  }
+
+  // ---------- Format ----------
+  const fmtM = (q) => (q / 100).toLocaleString('en-US', { minimumFractionDigits: q % 100 ? 2 : 0, maximumFractionDigits: 2 }).replace(/ /g, ' ');
+  const fmtN = (n) => n.toLocaleString('en-US').replace(/ /g, ' ');
+  const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const bill = (d) => `<span class="bill" style="background:${d.color}">${d.label}${d.coin ? '' : ' ₼'}</span>`;
+
+  let last = null;
+  function compute() {
+    const notes = NOTES.filter((n) => on[n.v]);
+    const coins = coinsCb.checked;
+    const dens = coins ? [...notes, ...COINS] : notes;
+    const { vals, bad } = parse(inp.value);
+    const rows = vals.map((q) => ({ q, ...breakdown(q, notes, coins) }));
+    const tot = new Map(dens.map((d) => [d.v, rows.reduce((s, r) => s + (r.counts.get(d.v) || 0), 0)]));
+    return { notes, dens, rows, tot, bad, sum: vals.reduce((a, b) => a + b, 0), rest: rows.reduce((s, r) => s + r.rest, 0) };
+  }
+
+  function render() {
+    store.set('text', inp.value); store.set('on', on); store.set('coins', coinsCb.checked);
+    $('#chips').innerHTML = NOTES.map((n) => `<label class="chip ${on[n.v] ? 'on' : 'off'}"><input type="checkbox" data-n="${n.v}" ${on[n.v] ? 'checked' : ''}>${bill(n)}</label>`).join('');
+    document.querySelectorAll('[data-n]').forEach((x) => (x.onchange = () => { on[+x.dataset.n] = x.checked; render(); }));
+
+    const r = last = compute();
+    const res = $('#res');
+    if (!r.notes.length) { res.innerHTML = '<div class="empty">Ən azı bir əskinas seçin.</div>'; return; }
+    if (!r.rows.length) { res.innerHTML = `<div class="empty">Məbləğləri yuxarıya yazın — nəticə dərhal burada görünəcək.${r.bad.length ? `<div class="msg warn">Oxunmadı: ${r.bad.map(esc).join(', ')}</div>` : ''}</div>`; return; }
+
+    const used = r.dens.filter((d) => r.tot.get(d.v) > 0 || !d.coin);
+    const nCount = (row) => used.reduce((s, d) => s + (row.counts.get(d.v) || 0), 0);
+    const formula = (row) => used.filter((d) => row.counts.get(d.v)).map((d) => `${row.counts.get(d.v)}×${d.label}${d.coin ? '' : ''}`).join(' + ') + (row.rest ? ` + ${fmtM(row.rest)} xırda` : '');
+
+    const body = r.rows.map((row, i) => `<tr>
+        <td class="amt" data-l="Məbləğ"><span class="idx">${i + 1}.</span>${fmtM(row.q)} ₼</td>
+        ${used.map((d) => { const c = row.counts.get(d.v) || 0; return `<td class="cnt ${c ? '' : 'z'}" data-l="${d.label}${d.coin ? 'əpik' : ' manat'}">${c ? `<b>${c}</b>` : '—'}</td>`; }).join('')}
+        <td data-l="Cəmi əskinas">${nCount(row)}</td>
+        <td class="formula">${formula(row)}</td>
+      </tr>`).join('');
+    const totRow = `<tr class="tot">
+        <td data-l="Hamısı">Cəmi: ${fmtM(r.sum)} ₼</td>
+        ${used.map((d) => { const c = r.tot.get(d.v); return `<td data-l="${d.label}${d.coin ? 'əpik' : ' manat'}">${c ? fmtN(c) : '—'}${c ? `<span class="v">${fmtM(c * d.v)} ₼</span>` : ''}</td>`; }).join('')}
+        <td data-l="Cəmi əskinas">${fmtN([...r.tot.values()].reduce((a, b) => a + b, 0))}</td><td class="formula"></td></tr>`;
+
+    const boxes = used.filter((d) => r.tot.get(d.v)).map((d) => `<div class="box">${bill(d)}<div class="c">${fmtN(r.tot.get(d.v))}</div><div class="s">= ${fmtM(r.tot.get(d.v) * d.v)} ₼</div></div>`).join('');
+    const check = used.reduce((s, d) => s + r.tot.get(d.v) * d.v, 0) + r.rest;
+
+    res.innerHTML = `<div class="body">
+        <div class="flabel" style="margin-top:0">Bütün ödənişlər üçün bankdan / kassadan götürün</div>
+        <div class="big">${boxes}<div class="box sum"><div>Cəmi</div><div class="c">${fmtM(r.sum)} ₼</div><div class="s">${r.rows.length} ödəniş</div></div></div>
+        ${r.rest ? `<div class="msg warn">Əskinasla bölünməyən xırda: <b>${fmtM(r.rest)} ₼</b> (qəpik${r.notes.some((n) => n.v === 100) ? '' : ' / 1 manat seçilməyib'}). Sikkələrə bölmək üçün yuxarıda «Qəpikləri də sikkələrə böl» işarəsini qoyun.</div>` : ''}
+        ${check === r.sum ? `<div class="msg ok">✓ Yoxlandı: əskinasların cəmi ${fmtM(check)} ₼ — məbləğlərin cəminə tam bərabərdir.</div>` : `<div class="msg warn">Diqqət: əskinasların cəmi ${fmtM(check)} ₼, məbləğlər ${fmtM(r.sum)} ₼.</div>`}
+        ${r.bad.length ? `<div class="msg warn">Oxunmadı (rəqəm deyil): ${r.bad.map(esc).join(', ')}</div>` : ''}
+      </div>
+      <div class="flabel" style="padding:0 18px">Hər ödəniş üzrə</div>
+      <div class="tscroll"><table class="t main"><thead><tr><th>Məbləğ</th>${used.map((d) => `<th>${bill(d)}</th>`).join('')}<th>Əskinas</th><th style="text-align:left">Bölgü</th></tr></thead>
+      <tbody>${body}${totRow}</tbody></table></div>`;
+  }
+
+  // ---------- Kopyala / CSV / Çap ----------
+  function asText() {
+    const r = last; if (!r || !r.rows.length) return '';
+    const used = r.dens.filter((d) => r.tot.get(d.v) > 0 || !d.coin);
+    const lines = r.rows.map((row, i) => `${i + 1}. ${fmtM(row.q)} ₼ = ` + used.filter((d) => row.counts.get(d.v)).map((d) => `${row.counts.get(d.v)} × ${d.label}${d.coin ? '' : ' ₼'}`).join(' + ') + (row.rest ? ` + ${fmtM(row.rest)} ₼ xırda` : ''));
+    lines.push('', `Cəmi ${fmtM(r.sum)} ₼ üçün lazımdır:`);
+    used.filter((d) => r.tot.get(d.v)).forEach((d) => lines.push(`  ${d.label}${d.coin ? 'əpik' : ' manat'}: ${r.tot.get(d.v)} ədəd = ${fmtM(r.tot.get(d.v) * d.v)} ₼`));
+    return lines.join('\n');
+  }
+  function toast(t) { const el = $('#toast'); el.textContent = t; el.classList.add('show'); setTimeout(() => el.classList.remove('show'), 1600); }
+  $('#copy').onclick = async () => {
+    const t = asText(); if (!t) return;
+    if (window.AndroidApp) { window.AndroidApp.copy(t); toast('Kopyalandı'); return; }
+    try { await navigator.clipboard.writeText(t); toast('Kopyalandı'); }
+    catch { const ta = document.createElement('textarea'); ta.value = t; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); ta.remove(); toast('Kopyalandı'); }
+  };
+  $('#csv').onclick = () => {
+    const r = last; if (!r || !r.rows.length) return;
+    const used = r.dens.filter((d) => r.tot.get(d.v) > 0 || !d.coin);
+    const num = (q) => (q / 100).toString().replace('.', ',');
+    const head = ['№', 'Məbləğ', ...used.map((d) => d.label + (d.coin ? 'əpik' : ' manat')), 'Cəmi əskinas', 'Xırda'];
+    const lines = [head.join(';')];
+    r.rows.forEach((row, i) => lines.push([i + 1, num(row.q), ...used.map((d) => row.counts.get(d.v) || 0), used.reduce((s, d) => s + (row.counts.get(d.v) || 0), 0), num(row.rest)].join(';')));
+    lines.push(['Cəmi', num(r.sum), ...used.map((d) => r.tot.get(d.v)), [...r.tot.values()].reduce((a, b) => a + b, 0), num(r.rest)].join(';'));
+    lines.push(['Manatla', '', ...used.map((d) => num(r.tot.get(d.v) * d.v))].join(';'));
+    const d = new Date();
+    const fname = `Manat bolgusu ${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}.csv`;
+    if (window.AndroidApp) { window.AndroidApp.shareCsv(fname, '\ufeff' + lines.join('\r\n')); return; }
+    const blob = new Blob(['\ufeff' + lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = fname;
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  };
+  $('#print').onclick = () => (window.AndroidApp ? window.AndroidApp.print() : window.print());
+  $('#example').onclick = () => { inp.value = '542, 341, 456, 742, 115, 669'; render(); };
+  $('#clear').onclick = () => { inp.value = ''; render(); inp.focus(); };
+  inp.addEventListener('input', render);
+  coinsCb.addEventListener('change', render);
+  render();
+
+  // test üçün
+  window.ManatCore = { parse, breakdown, split, NOTES };
+})();
+</script>
+</body>
+</html>

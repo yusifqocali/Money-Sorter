@@ -1,0 +1,47 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'az.yusif.manat'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'az.yusif.manat'
+        minSdk 24
+        targetSdk 34
+        // Each GitHub build gets a higher number, so a new APK installs over the old one.
+        versionCode((System.getenv('GITHUB_RUN_NUMBER') ?: '1').toInteger())
+        versionName "1.${System.getenv('GITHUB_RUN_NUMBER') ?: '0'}"
+    }
+
+    signingConfigs {
+        release {
+            // Fixed key kept in the repo so every build can update the installed app.
+            storeFile rootProject.file('keystore/money-sorter.jks')
+            storePassword 'moneysorter'
+            keyAlias 'moneysorter'
+            keyPassword 'moneysorter'
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig signingConfigs.release
+        }
+        debug {
+            signingConfig signingConfigs.release
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+}
+
+dependencies {
+    implementation 'androidx.webkit:webkit:1.11.0'
+    implementation 'androidx.core:core:1.13.1'
+}
