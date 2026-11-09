@@ -21,7 +21,8 @@ header.top { background: var(--navy); color: #fff; padding: 14px 20px; display: 
 header.top .logo { width: 38px; height: 38px; border-radius: 9px; background: rgba(255,255,255,.12); display: grid; place-items: center; font-size: 20px; font-weight: 700; }
 header.top h1 { margin: 0; font-size: 16px; letter-spacing: .14em; text-transform: uppercase; }
 header.top small { opacity: .7; font-size: 12px; }
-main { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; display: grid; gap: 16px; }
+main { max-width: 1180px; margin: 0 auto; padding: 18px 16px 60px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.card { min-width: 0; }
 .card { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
 .card > header { display: flex; align-items: center; gap: 10px; padding: 14px 18px 0; flex-wrap: wrap; }
 .card > header h2 { margin: 0; font-size: 15px; }
@@ -82,6 +83,25 @@ table.t td .idx { color: var(--muted); font-weight: 400; font-size: 12px; margin
   table.t.main tr.tot td { border-top: 0; } table.t.main tr.tot td .v { display: inline; margin-left: 10px; }
   table.t.main td.amt .idx { margin-left: auto; margin-right: 8px; }
 }
+/* Tez daxil etmə: yaz → Enter → siyahıya əlavə olunur */
+.quick { display: flex; gap: 8px; }
+.quick input { flex: 1; min-width: 0; font: 700 22px/1.2 var(--mono); padding: 12px 14px; border: 1px solid var(--line-2); border-radius: 10px; background: var(--surface); color: var(--ink); }
+.quick input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+.quick .btn.primary { font-size: 16px; padding: 0 18px; font-weight: 600; }
+.listhead { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 12px; font-size: 13.5px; color: var(--muted); flex-wrap: wrap; }
+.listhead b { color: var(--ink); font-family: var(--mono); }
+.list { list-style: none; margin: 8px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 6px; }
+.list li { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 8px; padding: 4px 4px 4px 10px; font-family: var(--mono); font-variant-numeric: tabular-nums; min-width: 0; }
+.list li .i { color: var(--muted); font-size: 12.5px; min-width: 2.4em; }
+.list li .a { font-weight: 700; font-size: 16px; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.list li button { border: 0; background: transparent; color: var(--muted); font-size: 20px; line-height: 1; width: 34px; height: 34px; border-radius: 6px; cursor: pointer; flex: none; }
+.list li button:hover, .list li button:focus-visible { color: var(--bad); background: var(--warn-bg); }
+.list li.new { animation: flash .8s ease-out; }
+@keyframes flash { from { background: var(--ok-bg); border-color: var(--ok); } to { background: transparent; } }
+@media (prefers-reduced-motion: reduce) { .list li.new { animation: none; } }
+details.paste { margin-top: 14px; }
+details.paste summary { cursor: pointer; color: var(--accent); font-size: 13.5px; padding: 4px 0; }
+details.paste textarea { margin-top: 8px; }
 @media print {
   header.top, .card.input, .noprint { display: none !important; }
   body { background: #fff; color: #000; } .card { border: 0; }
@@ -99,8 +119,21 @@ table.t td .idx { color: var(--muted); font-weight: 400; font-size: 12px; margin
   <section class="card input">
     <header><span class="n">1</span><h2>Məbləğlər</h2></header>
     <div class="body">
-      <textarea id="inp" placeholder="542, 341, 456, 742, 115, 669" spellcheck="false"></textarea>
-      <div class="note" style="margin-top:6px">Vergül + boşluq, boşluq, nöqtəli vergül və ya yeni sətirlə ayırın. Excel-dən sütunu birbaşa yapışdıra bilərsiniz. Qəpik: <span style="font-family:var(--mono)">542,50</span> və ya <span style="font-family:var(--mono)">542.50</span>.</div>
+      <form class="quick" id="qform" autocomplete="off">
+        <input id="qin" type="text" inputmode="decimal" enterkeyhint="enter" placeholder="Məs. 200 → Enter" aria-label="Məbləğ">
+        <button class="btn primary" type="submit" id="qadd">Əlavə et</button>
+      </form>
+      <div class="listhead">
+        <span id="lcount"></span>
+        <button class="btn" type="button" id="undo" hidden>↶ Sonuncunu sil</button>
+      </div>
+      <ol class="list" id="list"></ol>
+
+      <details class="paste" id="pasteBox">
+        <summary>Hamısını birdən yaz və ya yapışdır</summary>
+        <textarea id="inp" placeholder="542, 341, 456, 742, 115, 669" spellcheck="false"></textarea>
+        <div class="note" style="margin-top:6px">Vergül + boşluq, boşluq, nöqtəli vergül və ya yeni sətirlə ayırın. Excel-dən sütunu birbaşa yapışdıra bilərsiniz. Qəpik: <span style="font-family:var(--mono)">542,50</span> və ya <span style="font-family:var(--mono)">542.50</span>.</div>
+      </details>
 
       <div class="flabel">Hansı əskinaslar istifadə olunsun</div>
       <div class="chips" id="chips"></div>
@@ -219,6 +252,7 @@ table.t td .idx { color: var(--muted); font-weight: 400; font-size: 12px; margin
     $('#chips').innerHTML = NOTES.map((n) => `<label class="chip ${on[n.v] ? 'on' : 'off'}"><input type="checkbox" data-n="${n.v}" ${on[n.v] ? 'checked' : ''}>${bill(n)}</label>`).join('');
     document.querySelectorAll('[data-n]').forEach((x) => (x.onchange = () => { on[+x.dataset.n] = x.checked; render(); }));
 
+    renderList();
     const r = last = compute();
     const res = $('#res');
     if (!r.notes.length) { res.innerHTML = '<div class="empty">Ən azı bir əskinas seçin.</div>'; return; }
@@ -288,11 +322,52 @@ table.t td .idx { color: var(--muted); font-weight: 400; font-size: 12px; margin
     document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 1000);
   };
   $('#print').onclick = () => (window.AndroidApp ? window.AndroidApp.print() : window.print());
+  // ---------- Tez daxil etmə ----------
+  const qin = $('#qin');
+  let flashFrom = -1;
+  const toText = (vals) => vals.map((q) => (q / 100).toString()).join('\n');
+  function renderList() {
+    const vals = parse(inp.value).vals;
+    const sum = vals.reduce((a, b) => a + b, 0);
+    $('#list').innerHTML = vals.map((q, i) => `<li${flashFrom >= 0 && i >= flashFrom ? ' class="new"' : ''}><span class="i">${i + 1}.</span><span class="a">${fmtM(q)} ₼</span><button type="button" data-del="${i}" aria-label="${i + 1}. məbləği sil" title="Sil">×</button></li>`).join('');
+    flashFrom = -1;
+    $('#lcount').innerHTML = vals.length ? `<b>${vals.length}</b> ödəniş · cəmi <b>${fmtM(sum)} ₼</b>` : 'Hələ məbləğ yoxdur — yuxarıda yazıb Enter basın.';
+    $('#undo').hidden = !vals.length;
+  }
+  $('#qform').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const typed = qin.value.trim();
+    const { vals } = parse(typed);
+    if (!vals.length) { if (typed) toast('Rəqəm yazın, məsələn 200 və ya 542,50'); qin.focus(); return; }
+    const cur = parse(inp.value).vals;
+    flashFrom = cur.length;
+    inp.value = toText([...cur, ...vals]);
+    qin.value = '';
+    render();
+    qin.focus();
+    const items = $('#list').children;
+    if (items.length) items[items.length - 1].scrollIntoView({ block: 'nearest' });
+  });
+  $('#list').addEventListener('click', (e) => {
+    const b = e.target.closest('[data-del]'); if (!b) return;
+    const vals = parse(inp.value).vals;
+    vals.splice(+b.dataset.del, 1);
+    inp.value = toText(vals);
+    render();
+  });
+  $('#undo').onclick = () => {
+    const vals = parse(inp.value).vals; if (!vals.length) return;
+    const gone = vals.pop();
+    inp.value = toText(vals);
+    render(); toast(`${fmtM(gone)} ₼ silindi`); qin.focus();
+  };
+
   $('#example').onclick = () => { inp.value = '542, 341, 456, 742, 115, 669'; render(); };
-  $('#clear').onclick = () => { inp.value = ''; render(); inp.focus(); };
+  $('#clear').onclick = () => { inp.value = ''; render(); qin.focus(); };
   inp.addEventListener('input', render);
   coinsCb.addEventListener('change', render);
   render();
+  try { if (matchMedia('(pointer: fine)').matches) qin.focus(); } catch {}
 
   // test üçün
   window.ManatCore = { parse, breakdown, split, NOTES };
