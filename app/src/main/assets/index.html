@@ -137,9 +137,6 @@ details.paste textarea { margin-top: 8px; }
 
       <div class="flabel">Hansı əskinaslar istifadə olunsun</div>
       <div class="chips" id="chips"></div>
-      <div class="row" style="margin-top:10px">
-        <label class="note" style="display:flex;gap:6px;align-items:center;cursor:pointer"><input type="checkbox" id="coins"> Qəpikləri də sikkələrə böl (50, 20, 10, 5, 3, 1 qəpik)</label>
-      </div>
       <div class="row" style="margin-top:12px">
         <button class="btn" id="example">Nümunə</button>
         <button class="btn" id="clear">Təmizlə</button>
@@ -181,9 +178,9 @@ details.paste textarea { margin-top: 8px; }
   };
   const on = store.get('on', null) || Object.fromEntries(NOTES.map((n) => [n.v, n.def]));
   const $ = (s) => document.querySelector(s);
-  const inp = $('#inp'), coinsCb = $('#coins');
+  const inp = $('#inp');
+  const coinsCb = { checked: false, addEventListener() {} }; // sikkə seçimi götürülüb
   inp.value = store.get('text', '');
-  coinsCb.checked = store.get('coins', false);
 
   // ---------- Mətndən məbləğləri oxu ----------
   // "542, 341" → iki məbləğ; "542,50" → 542.50 (vergüldən sonra 1–2 rəqəm = qəpik)
@@ -279,7 +276,7 @@ details.paste textarea { margin-top: 8px; }
     res.innerHTML = `<div class="body">
         <div class="flabel" style="margin-top:0">Bütün ödənişlər üçün bankdan / kassadan götürün</div>
         <div class="big">${boxes}<div class="box sum"><div>Cəmi</div><div class="c">${fmtM(r.sum)} ₼</div><div class="s">${r.rows.length} ödəniş</div></div></div>
-        ${r.rest ? `<div class="msg warn">Əskinasla bölünməyən xırda: <b>${fmtM(r.rest)} ₼</b> (qəpik${r.notes.some((n) => n.v === 100) ? '' : ' / 1 manat seçilməyib'}). Sikkələrə bölmək üçün yuxarıda «Qəpikləri də sikkələrə böl» işarəsini qoyun.</div>` : ''}
+        ${r.rest ? `<div class="msg warn">Əskinasla bölünməyən xırda: <b>${fmtM(r.rest)} ₼</b> (qəpik${r.notes.some((n) => n.v === 100) ? '' : ' / 1 manat seçilməyib'}).</div>` : ''}
         ${check === r.sum ? `<div class="msg ok">✓ Yoxlandı: əskinasların cəmi ${fmtM(check)} ₼ — məbləğlərin cəminə tam bərabərdir.</div>` : `<div class="msg warn">Diqqət: əskinasların cəmi ${fmtM(check)} ₼, məbləğlər ${fmtM(r.sum)} ₼.</div>`}
         ${r.bad.length ? `<div class="msg warn">Oxunmadı (rəqəm deyil): ${r.bad.map(esc).join(', ')}</div>` : ''}
       </div>
